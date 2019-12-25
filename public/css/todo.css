@@ -1,0 +1,16 @@
+.to-do-container {
+    width: 940px;
+    margin: 0px auto;
+    padding: 20px;
+    border: 1px solid #bcbcbc;
+}
+
+.to-do-header {
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #bcbcbc;
+}
+
+.to-do-content {
+
+}
