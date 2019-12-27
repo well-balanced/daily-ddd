@@ -59,8 +59,13 @@ function createTask(body) {
     db.query(`INSERT INTO todo (task,state,user_id) values('${body.task}','${body.state}','${body.id}')`)
 }
 
-getUserInfo('well-balanced', (taskList,progressList,doneList)=>{
-    app.get('/',(req,res)=>{
+function deleteTask(body) {
+    db.query(`DELETE FROM todo WHERE task='${body.task}'`)
+}
+
+
+app.get('/',(req,res)=>{
+    getUserInfo('well-balanced', (taskList,progressList,doneList)=>{
         res.render('index',{
             taskList,
             progressList,
@@ -69,11 +74,13 @@ getUserInfo('well-balanced', (taskList,progressList,doneList)=>{
     })
 })
 
-
-
-
 app.post('/create',(req,res)=>{
     createTask(req.body)
+})
+
+app.post('/delete',(req,res)=>{
+    console.log(req.body)
+    deleteTask(req.body)
 })
 
 app.listen(3000,()=>{

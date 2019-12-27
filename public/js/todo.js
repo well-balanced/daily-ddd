@@ -8,19 +8,23 @@ $(function(){
         });
 
         // 입력값 넣기
-        var task = $("<p class='task border rounded text-left'></p>").text($('#enter-task').val()+' ')
+        var task = $("<p class='task border rounded text-left'></p>").text($('#enter-task ').val()+' ')
       
         //삭제버튼
-        var del = $("<ion-icon name='trash'></ion-icon>").click((e)=>{
+        var del = $("<ion-icon name='trash'> </ion-icon>").click((e)=>{
           var p = $(e.target).parent();
+          $.ajax({ 
+            url:'/delete', 
+            type:'post', 
+            data:{task:`${p.text().trim()}`},
+        });
           p.fadeOut('slow',()=>{
             p.remove()
           })
         })
         
-        var check = $("<ion-icon name='checkmark'></ion-icon>").click((e)=>{
+        var check = $("<ion-icon name='checkmark'>&nbsp</ion-icon>").click((e)=>{
           var p = $(e.target).parent();
-          console.log(p)
           p.fadeOut('slow',()=>{
             $('#progresslist').append(p);
             p.fadeIn(()=>{
