@@ -1,21 +1,28 @@
 <div class="container">
     <div class="col-md-12 text-center">
-        <h1>To Do List</h1>
+        <h2>Manage your Task</h2>
     </div>
     <div class="row">
-        <input id="enter-task" type="text" />&nbsp&nbsp&nbsp<button id="task" type="button" class="btn btn-primary">Add task</button>
+        <form>
+            <input id="enter-task" placeholder="Add task !"type="text" />&nbsp&nbsp&nbsp<button id="task" type="button" class="btn btn-dark">Add</button>
+        </form>
     </div>
     <br>
     <div class="row">
-        <div class="col-md-4" name="task" id="tasklist">
-            <h2>Task</h2>
+        <div class="col-md-1 blank"></div>
+        <div class="col-md-3 text-center box border rounded-top" name="task" id="tasklist">
+            <h4>Task</h4>
+            {{#each taskList}}<p class='task border rounded text-left'>{{this}} <ion-icon name='checkmark'></ion-icon> <ion-icon name='trash'></ion-icon></p>{{/each}}
         </div>
-        <div class="col-md-4" name="progress" id="progresslist">
-            <h2>In Progress</h2>
+        <div class="col-md-1"></div>
+        <div class="col-md-3 text-center box border rounded-top" name="progress" id="progresslist">
+            <h4>In Progress</h4>
+            {{#each progressList}}<p class='task border rounded text-left'>{{this}} <ion-icon name='checkmark'></ion-icon> <ion-icon name='trash'></ion-icon></p>{{/each}}
         </div>
-
-        <div class="col-md-4" name="complate" id="donelist">
-            <h2>Done</h2>
+        <div class="col-md-1"></div>
+        <div class="col-md-3 text-center box border rounded-top" name="complate" id="donelist">
+            <h4>Done</h4>
+            {{#each doneList}}<p class='task border rounded text-left'>{{this}} <ion-icon name='checkmark'></ion-icon> <ion-icon name='trash'></ion-icon></p>{{/each}}
         </div>
     </div>
 </div>
