@@ -1,17 +1,28 @@
+h1 {
+    font-family: 'Courier Prime', monospace;
+}
 body {
     background-color: #E6E8E7;
+    font-family: 'Nanum Gothic', sans-serif;
 }
 
 #tasklist {
     border: 4px solid #E9A39D !important;
+    
+    /* font-family: 'Courier Prime', monospace;
+    font-family: 'Inria Serif', serif;
+    font-family: 'Nanum Gothic', sans-serif; */
+    font-family: 'Montserrat', sans-serif;
 }
 
 #progresslist {
     border: 4px solid #7DB6D1 !important;
+    font-family: 'Montserrat', sans-serif;
 }
 
 #donelist {
     border: 4px solid #7FBDB0 !important;
+    font-family: 'Montserrat', sans-serif;
 }
 
 #tasklist > h4 {
@@ -32,7 +43,7 @@ body {
     color: #F1F3F2;
 }
 
-div > h2 {
+div > h1 {
     padding: 20px;
     margin: 10px;
 }

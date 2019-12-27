@@ -63,13 +63,30 @@ function deleteTask(body) {
     db.query(`DELETE FROM todo WHERE task='${body.task}'`)
 }
 
+function changeState(body) {
+    db.query(`UPDATE todo SET state='${body.state}' WHERE task='${body.task}'`)
+}
+
+const onDelete = (e) => {
+    var p = $(e.target).parent();
+    $.ajax({ 
+      url:'/delete', 
+      type:'post', 
+      data:{task:`${p.text().trim()}`},
+    });
+    p.fadeOut('slow',()=>{
+      p.remove()
+    })
+}
+
 
 app.get('/',(req,res)=>{
     getUserInfo('well-balanced', (taskList,progressList,doneList)=>{
         res.render('index',{
             taskList,
             progressList,
-            doneList
+            doneList,
+            onDelete
         })
     })
 })
@@ -79,8 +96,15 @@ app.post('/create',(req,res)=>{
 })
 
 app.post('/delete',(req,res)=>{
-    console.log(req.body)
     deleteTask(req.body)
+})
+
+app.post('/progress',(req,res)=>{
+    changeState(req.body)
+});
+
+app.post('/done',(req,res)=>{
+    changeState(req.body)
 })
 
 app.listen(3000,()=>{

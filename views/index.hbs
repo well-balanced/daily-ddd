@@ -1,6 +1,6 @@
 <div class="container">
     <div class="col-md-12 text-center">
-        <h2>Manage your Task</h2>
+        <h1><strong>Dairy, DDD :)</strong></h1>
     </div>
     <div class="row">
         <form>
@@ -11,18 +11,18 @@
     <div class="row">
         <div class="col-md-1 blank"></div>
         <div class="col-md-3 text-center box border rounded-top" name="task" id="tasklist">
-            <h4>Task</h4>
-            {{#each taskList}}<p class='task border rounded text-left'>{{this}} <ion-icon name='checkmark'></ion-icon> <ion-icon name='trash'></ion-icon></p>{{/each}}
+            <h4>Dream bag</h4>
+            {{#each taskList}}<p class='task border rounded text-left'>{{this}} <ion-icon name='checkmark' class='check'></ion-icon> <ion-icon name='trash' class="trash"></ion-icon></p>{{/each}}
         </div>
         <div class="col-md-1"></div>
         <div class="col-md-3 text-center box border rounded-top" name="progress" id="progresslist">
-            <h4>In Progress</h4>
-            {{#each progressList}}<p class='task border rounded text-left'>{{this}} <ion-icon name='checkmark'></ion-icon> <ion-icon name='trash'></ion-icon></p>{{/each}}
+            <h4>Daily specials</h4>
+            {{#each progressList}}<p class='task border rounded text-left'>{{this}} <ion-icon name='checkmark' class='check'></ion-icon> <ion-icon name='trash' class="trash"></ion-icon></p>{{/each}}
         </div>
         <div class="col-md-1"></div>
         <div class="col-md-3 text-center box border rounded-top" name="complate" id="donelist">
-            <h4>Done</h4>
-            {{#each doneList}}<p class='task border rounded text-left'>{{this}} <ion-icon name='checkmark'></ion-icon> <ion-icon name='trash'></ion-icon></p>{{/each}}
+            <h4>Dobby is free</h4>
+            {{#each doneList}}<p class='task border rounded text-left'>{{this}} <ion-icon name='checkmark' class='check'></ion-icon> <ion-icon name='trash' class="trash"></ion-icon></p>{{/each}}
         </div>
     </div>
 </div>
