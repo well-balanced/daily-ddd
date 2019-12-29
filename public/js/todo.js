@@ -68,4 +68,8 @@ $(function(){
     $('.check').click((e)=>{
         onChange(e);
     })
+    $('#add').click((e)=>{
+        e.preventDefault();
+    })
+
 })

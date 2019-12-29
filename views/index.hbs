@@ -1,15 +1,16 @@
-<div class="container">
+<div id="container"class="container">
     <div class="col-md-12 text-center">
         <h1><strong>Dairy, DDD :)</strong></h1>
     </div>
+    <div id="todos"class="border rounded-pill">
+        <a id="add" href="#"><i class="far fa-plus-square" data-target="#myModal" data-toggle="modal"></i></a>
+    </div>
     <div class="row">
-        <form>
-            <input id="enter-task" placeholder="Add task !"type="text" />&nbsp&nbsp&nbsp<button id="task" type="button" class="btn btn-dark">Add</button>
-        </form>
+            <input id="enter-task" placeholder="Add your Dream :)"type="text" /><button id="task" type="button" class="btn btn-dark">Add</button>
     </div>
     <br>
     <div class="row">
-        <div class="col-md-1 blank"></div>
+        
         <div class="col-md-3 text-center box border rounded-top" name="task" id="tasklist">
             <h4>Dream bag</h4>
             {{#each taskList}}<p class='task border rounded text-left'>{{this}} <ion-icon name='checkmark' class='check'></ion-icon> <ion-icon name='trash' class="trash"></ion-icon></p>{{/each}}
@@ -25,4 +26,30 @@
             {{#each doneList}}<p class='task border rounded text-left'>{{this}} <ion-icon name='checkmark' class='check'></ion-icon> <ion-icon name='trash' class="trash"></ion-icon></p>{{/each}}
         </div>
     </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal modal-center fade" id="myModal">
+  <div class="modal-dialog modal-center">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header text-center">
+        <h4 class="modal-title">&nbsp&nbsp&nbsp&nbsp&nbspNew DDD</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <input placeholder="ex) To Study, Travel" />
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-outline-info">Create</button>
+        <button type="button" class="btn btn-outline-info">Back</button>
+      </div>
+
+    </div>
+  </div>
 </div>
