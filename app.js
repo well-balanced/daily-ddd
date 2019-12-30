@@ -67,16 +67,9 @@ function changeState(body) {
     db.query(`UPDATE todo SET state='${body.state}' WHERE task='${body.task}'`)
 }
 
-const onDelete = (e) => {
-    var p = $(e.target).parent();
-    $.ajax({ 
-      url:'/delete', 
-      type:'post', 
-      data:{task:`${p.text().trim()}`},
-    });
-    p.fadeOut('slow',()=>{
-      p.remove()
-    })
+
+function createNewToDo(user,name) {
+    db.query(`CREATE DATABASE ${name}`)
 }
 
 
@@ -86,9 +79,12 @@ app.get('/',(req,res)=>{
             taskList,
             progressList,
             doneList,
-            onDelete
         })
     })
+})
+
+app.post('/new',(req,res)=>{
+    createNewToDo('well-balanced',req.body.newName)
 })
 
 app.post('/create',(req,res)=>{

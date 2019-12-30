@@ -1,4 +1,13 @@
 
+function createToDoList(e) {
+    var newName = $('#newName').val()
+    $.ajax({
+        url: '/new',
+        type: 'post',
+        data:{newName:newName}
+    });
+}
+
 function onDelete(e) {
     var p = $(e.target).parent();
     $.ajax({ 
@@ -71,5 +80,7 @@ $(function(){
     $('#add').click((e)=>{
         e.preventDefault();
     })
-
+    $('#newlist').click((e)=>{
+        createToDoList(e)
+    })
 })
