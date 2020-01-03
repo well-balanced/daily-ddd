@@ -1,9 +1,16 @@
+<div class="row">
+  <div class="col-md-11"></div>
+  <div class="col-md-1">
+    <i class="fas fa-lock" data-target="#login" data-toggle="modal"></i>
+  </div>
+</div>
 <div id="container"class="container">
     <div class="col-md-12 text-center">
         <h1><strong>Dairy, DDD :)</strong></h1>
     </div>
     <div id="todos"class="border rounded-pill">
-        <a id="add" href="#"><i class="far fa-plus-square" data-target="#myModal" data-toggle="modal"></i></a>
+        <a id="add" href="#"><i class="far fa-plus-square" data-target="#newtodo" data-toggle="modal"></i></a>
+        {{#each todoList}}<span class="todos border rounded-pill" onclick="location.href='/{{this}}'">{{this}}</span>{{/each}}
     </div>
     <div class="row">
             <input id="enter-task" placeholder="Add your Dream :)"type="text" /><button id="task" type="button" class="btn btn-dark">Add</button>
@@ -28,8 +35,8 @@
     </div>
 </div>
 
-<!-- The Modal -->
-<div class="modal modal-center fade" id="myModal">
+<!-- The New ToDo Modal -->
+<div class="modal modal-center fade" id="newtodo">
   <div class="modal-dialog modal-center">
     <div class="modal-content">
 
@@ -41,13 +48,40 @@
 
       <!-- Modal body -->
       <div class="modal-body">
-        <input id="newName" placeholder="ex) To Study, Travel" />
+        <input id="newName" placeholder="ex) To study, Travel" />
       </div>
 
       <!-- Modal footer -->
       <div class="modal-footer">
         <button type="button" id="newlist" class="btn btn-outline-info" >Create</button>
         <button type="button" class="btn btn-outline-info">Back</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal modal-center fade" id="login">
+  <div class="modal-dialog modal-center">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header text-center">
+        <h4 class="modal-title">Login</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <input id="login_username" placeholder="username" /><br><br>
+        <input id="login_password" placeholder="password" type="password"/>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" id="login_button" class="btn btn-outline-info" >Login</button>
+        <button id="back_button" type="button" class="btn btn-outline-info">Back</button>
       </div>
 
     </div>

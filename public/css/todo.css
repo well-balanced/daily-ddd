@@ -3,6 +3,11 @@ i {
     color:#F1F3F2;
 }
 
+.fa-lock {
+    color: black;
+    padding-top: 10px;
+}
+
 h1 {
     font-family: 'Courier Prime', monospace;
 }
@@ -29,6 +34,10 @@ on-icon {
     margin-right: 30px;
     background-color: #C6C6C6;
     opacity: 1;
+}
+
+.todos {
+    cursor: pointer;
 }
 
 #tasklist {

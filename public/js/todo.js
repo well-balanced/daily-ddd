@@ -6,6 +6,23 @@ function createToDoList(e) {
         type: 'post',
         data:{newName:newName}
     });
+    location.reload()
+}
+
+
+
+function login(e) {
+    var username = $('#login_username').val()
+    var password = $('#login_password').val()
+    console.log(username)
+    $.ajax({
+        url: '/auth/login',
+        type: 'post',
+        data:{
+            username:username,
+            password:password
+        }
+    })
 }
 
 function onDelete(e) {
@@ -81,6 +98,14 @@ $(function(){
         e.preventDefault();
     })
     $('#newlist').click((e)=>{
+        $('#newtodo').modal("hide");
         createToDoList(e)
+    })
+    $('#login_button').click((e)=>{
+        login(e)
+        $('#login').modal("hide");
+    })
+    $('#back_button').click((e)=>{
+        $('#login').modal("hide");
     })
 })
