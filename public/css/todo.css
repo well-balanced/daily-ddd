@@ -3,7 +3,7 @@ i {
     color:#F1F3F2;
 }
 
-.fa-lock {
+.fa-lock, .fa-lock-open {
     color: black;
     padding-top: 10px;
 }

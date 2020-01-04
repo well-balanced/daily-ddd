@@ -5,28 +5,42 @@ const app = express();
 const hbs = require('express-handlebars');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const cookieSession = require('cookie-session');
 const flash = require('connect-flash');
 const passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy;
-    
+const session = require('express-session')
+const MySQLStore = require('express-mysql-session')(session)
 
+app.use(session({
+    secret: 'asadlfkj!@#!@#dfgasdg',
+    resave: false,
+    saveUninitialized: true,
+    store: new MySQLStore({
+        host:'localhost',
+        port: 3306,
+        user: 'root',
+        password: 'softkei7&',
+        database: 'todo'
+    }),
+  }))
 
+passport.serializeUser(function(user, done) {
+    done(null, user[0].username);
+});
+  
+passport.deserializeUser(function(username, done) {
+    db.query("SELECT * FROM users WHERE username = ?;", username, (err,user)=>{
+        done(null, user);  
+    })
+});
 
-
-
-app.use(cookieSession({
-    keys: ['node_yun'],
-    cookie: {
-        maxAge: 1000*60*60 // 1시간
-    }
-}));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use('/auth',require('./api/auth/index'))
+
 
 var db = mysql.createConnection({
     host     : 'localhost',
@@ -38,18 +52,17 @@ db.connect();
    
 passport.use(new LocalStrategy(
     function(username, password, done) {
-        db.query("SELECT * FROM users WHERE username = ?;", username, (err,result)=>{
+        db.query("SELECT * FROM users WHERE username = ?;", username, (err,user)=>{
             if(err) {
                 return done(err);
             }
-            if(result.length===0) {
+            if(user.length===0) {
                 return done(null,false, {message: '유저가 존재하지 않습니다.'})
             }
-            if(password!==result[0].password){
+            if(password!==user[0].password){
                 return done(null,false, {message:'잘못된 비밀번호입니다.'})
             }
-            console.log(result)
-            return done(null,result)
+            return done(null,user)
         })
     }
 ));
@@ -67,6 +80,15 @@ app.engine('hbs',hbs({
 app.set('view engine','hbs');
 
 // '/' get
+
+function authUser(user) {
+    if(user) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function getUserInfo(username,callback) {
     db.query(`SELECT * FROM users WHERE users.username="${username}"`,function (error, user, fields) {
         if (error) {
@@ -121,8 +143,12 @@ function createNewToDo(user,name) {
 
 
 app.get('/',(req,res)=>{
-    getUserInfo('well-balanced', (todoList,taskList,progressList,doneList)=>{
+    var isLogined = authUser(req.user[0])
+    var username = req.user[0].username
+    getUserInfo(username, (todoList,taskList,progressList,doneList)=>{
         res.render('index',{
+            isLogined,
+            username,
             todoList,
             taskList,
             progressList,
@@ -154,7 +180,6 @@ app.post('/done',(req,res)=>{
 
 app.post('/auth/login',
   passport.authenticate('local', { successRedirect: '/', failureRedirect: '/fail' }), (req,res)=> {
-      res.redirect('/')
   });
 
 app.listen(3000,()=>{
