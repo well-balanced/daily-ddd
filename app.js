@@ -94,32 +94,36 @@ function getUserInfo(username,callback) {
         if (error) {
             console.log(error)
         }
-        db.query(`SELECT state,task,todoname FROM todo LEFT JOIN users ON todo.user_id=${user[0].id}`,function (error, results, fields) {
-            if (error) {
-                console.log(error)
-            }
-            var todoList = [];
-            var taskList = [];
-            var progressList = [];
-            var doneList = [];
-            todoList.push(results[0].todoname)
-            results.forEach((result,index)=>{
-                if(result.state === 'task') {
-                    taskList.push(result.task)
-                } else if(result.state === 'progress') {
-                    progressList.push(result.task)
-                } else if(result.state === 'done') {
-                    doneList.push(result.task)
+        var todoList = [];
+        var taskList = [];
+        var progressList = [];
+        var doneList = [];
+        if (user[0]) {
+            db.query(`SELECT state,task,todoname FROM todo LEFT JOIN users ON todo.user_id=${user[0].id}`,function (error, results, fields) {
+                if (error) {
+                    console.log(error)
                 }
-                todoList.forEach((todo,i)=>{
-                    if(todo!==result.todoname) {
-                        todoList.push(result.todoname)
+                todoList.push(results[0].todoname)
+                results.forEach((result,index)=>{
+                    if(result.state === 'task') {
+                        taskList.push(result.task)
+                    } else if(result.state === 'progress') {
+                        progressList.push(result.task)
+                    } else if(result.state === 'done') {
+                        doneList.push(result.task)
                     }
+                    todoList.forEach((todo,i)=>{
+                        if(todo!==result.todoname) {
+                            todoList.push(result.todoname)
+                        }
+                    })
                 })
+                todoList = Array.from(new Set(todoList))
+                callback(todoList,taskList,progressList,doneList)
             })
-            todoList = Array.from(new Set(todoList))
+        } else {
             callback(todoList,taskList,progressList,doneList)
-        })
+        } 
     })
 }
 
@@ -143,8 +147,11 @@ function createNewToDo(user,name) {
 
 
 app.get('/',(req,res)=>{
-    var isLogined = authUser(req.user[0])
-    var username = req.user[0].username
+    var isLogined, username
+    if(req.user) {
+        var isLogined = authUser(req.user[0])
+        var username = req.user[0].username
+    }
     getUserInfo(username, (todoList,taskList,progressList,doneList)=>{
         res.render('index',{
             isLogined,
@@ -180,7 +187,13 @@ app.post('/done',(req,res)=>{
 
 app.post('/auth/login',
   passport.authenticate('local', { successRedirect: '/', failureRedirect: '/fail' }), (req,res)=> {
-  });
+});
+
+app.get('/auth/logout', (req,res)=>{
+    req.logout()
+    res.redirect('/')
+})
+
 
 app.listen(3000,()=>{
     console.log('Port 3000!')

@@ -21,6 +21,23 @@ function login(e) {
         data:{
             username:username,
             password:password
+        },
+        success: function() {
+            $('#login').modal("hide");
+            location.reload()
+        }
+    })
+}
+
+function register(e) {
+    var username = $('#register_username').val()
+    var password = $('#register_password').val()
+    $.ajax({
+        url: '/auth/register',
+        type: 'post',
+        data:{
+            username:username,
+            password:password
         }
     })
 }
@@ -101,11 +118,20 @@ $(function(){
         $('#newtodo').modal("hide");
         createToDoList(e)
     })
-    $('#login_button').click((e)=>{
-        login(e)
-        $('#login').modal("hide");
+    $('#login_password').keydown((e)=>{
+        if (e.keyCode == 13) {
+            login(e);
+        }
     })
-    $('#back_button').click((e)=>{
+    $('#login_button').click((e)=>{
+        login(e); 
+    })
+    $('#login_register_button').click((e)=>{
         $('#login').modal("hide");
+        $('#register').modal("show");
+    })
+    $('#register_button').click((e)=>{
+        register(e);
+        $('#register').modal("hide");
     })
 })
