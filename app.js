@@ -24,21 +24,21 @@ app.use(session({
     }),
   }))
 
-passport.serializeUser(function(user, done) {
-    done(null, user[0].username);
-});
-  
-passport.deserializeUser(function(username, done) {
-    db.query("SELECT * FROM users WHERE username = ?;", username, (err,user)=>{
-        done(null, user);  
-    })
-});
-
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(__dirname+'/public'));
+
+app.engine('hbs',hbs({
+    extname:'hbs',
+    defaultLayout:'layout',
+    layoutsDir:__dirname+'/views/layout',
+    partialsDir:__dirname+'views/partials'
+}));
+
+app.set('view engine','hbs');
 // app.use('/auth',require('./api/auth/index'))
 
 
@@ -49,6 +49,16 @@ var db = mysql.createConnection({
     database : 'todo'
   });
 db.connect();
+
+passport.serializeUser(function(user, done) {
+    done(null, user[0].username);
+});
+  
+passport.deserializeUser(function(username, done) {
+    db.query("SELECT * FROM users WHERE username = ?;", username, (err,user)=>{
+        done(null, user);  
+    })
+});
    
 passport.use(new LocalStrategy(
     function(username, password, done) {
@@ -68,16 +78,6 @@ passport.use(new LocalStrategy(
 ));
 
 
-app.use(express.static(__dirname+'/public'));
-
-app.engine('hbs',hbs({
-    extname:'hbs',
-    defaultLayout:'layout',
-    layoutsDir:__dirname+'/views/layout',
-    partialsDir:__dirname+'views/partials'
-}));
-
-app.set('view engine','hbs');
 
 // '/' get
 
@@ -149,7 +149,7 @@ function createNewToDo(user,name) {
 app.get('/',(req,res)=>{
     var isLogined, username
     if(req.user) {
-        var isLogined = authUser(req.user[0])
+        var isLogined = true;
         var username = req.user[0].username
     }
     getUserInfo(username, (todoList,taskList,progressList,doneList)=>{
@@ -186,7 +186,28 @@ app.post('/done',(req,res)=>{
 })
 
 app.post('/auth/login',
-  passport.authenticate('local', { successRedirect: '/', failureRedirect: '/fail' }), (req,res)=> {
+  passport.authenticate('local', { successRedirect: '/', failureRedirect: '/auth/login/fail', failureFlash:true}));
+
+
+app.get('/auth/login/fail', (req,res)=>{
+    res.status(409).send(req.flash().error[0])
+})
+
+app.post('/auth/register',(req,res)=>{
+    var username = req.body.username;
+    var password = req.body.password;
+    db.query(`SELECT * FROM users WHERE username='${username}';`, (err,user)=>{
+        if(user[0]) {       
+            res.status(409).send('이미 존재하는 username 입니다.')
+        } else {
+            if(username.length > 16 || password.length > 16) {
+                res.status(409).send("username과 password는 16자를 넘을 수 없습니다.")
+            } else {
+                db.query(`INSERT INTO users (username,password) values('${username}','${password}')`)
+                res.send('성공적으로 회원가입이 완료되었습니다.')
+            }
+        }
+    })
 });
 
 app.get('/auth/logout', (req,res)=>{

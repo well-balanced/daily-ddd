@@ -14,7 +14,6 @@ function createToDoList(e) {
 function login(e) {
     var username = $('#login_username').val()
     var password = $('#login_password').val()
-    console.log(username)
     $.ajax({
         url: '/auth/login',
         type: 'post',
@@ -25,6 +24,9 @@ function login(e) {
         success: function() {
             $('#login').modal("hide");
             location.reload()
+        },
+        error: function(req) {
+            $('.auth-flash-massage').text(req.responseText)
         }
     })
 }
@@ -38,6 +40,13 @@ function register(e) {
         data:{
             username:username,
             password:password
+        },
+        success: function(result) {
+            alert(result)
+            location.reload()
+        },
+        error: function(req,status,error){
+            $('.auth-flash-massage').text(req.responseText)
         }
     })
 }
@@ -132,6 +141,5 @@ $(function(){
     })
     $('#register_button').click((e)=>{
         register(e);
-        $('#register').modal("hide");
     })
 })
