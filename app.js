@@ -36,57 +36,54 @@ app.set('view engine','hbs');
 app.use('/auth',require('./api/auth/index'))
 
 db.setDB()
-
-app.get('/',(req,res)=>{
-    var isLogined, username
-    if(req.user) {
-        var isLogined = true;
-        var username = req.user[0].username
+const checkLogined = (user) => {
+    var username
+    if(user) {
+        username = user[0].username
     }
-    db.getUserInfo(username, req.query.todoname, (todoList,taskList,progressList,doneList)=>{
-        console.log(taskList)
+    return username
+}
+app.get('/',(req,res) => {
+    var username = checkLogined(req.user)
+    db.getChartList(username, (todoList) => {
         res.render('index',{
-            isLogined,
+            root : true,
             username,
             todoList,
-            taskList,
-            progressList,
-            doneList,
         })
     })
 })
 
-app.post('/',(req,res)=>{
-    var isLogined, username
-    if(req.user) {
-        var isLogined = true;
-        var username = req.user[0].username
-    }
-    db.getUserInfo(username, req.body.todoname, (todoList,taskList,progressList,doneList)=>{
+
+app.get('/chart/:id',(req,res)=>{
+    var chartname = req.params.id;
+    var username = checkLogined(req.user)
+    db.getChart(username, chartname, (todoList, taskList, progressList, doneList) => {
         res.render('index',{
-            isLogined,
             username,
             todoList,
             taskList,
             progressList,
             doneList,
+            chartname
         })
     })
+})
+
+app.delete('/chart/:id',(req,res)=>{
+    db.deleteToDo(req.body.todoname);
+    res.send('성공')
 })
 
 
 app.post('/new',(req,res)=>{
     db.createNewToDo(req.user[0].id,req.body.newName)
-
 })
 
 app.post('/create',(req,res)=>{
     var userId = req.user[0].id
     db.createTask(req.body,userId)
-})
-
-app.post('/delete',(req,res)=>{
-    db.deleteTask(req.body)
+    res.redirect('/');
 })
 
 app.post('/progress',(req,res)=>{
@@ -97,6 +94,9 @@ app.post('/done',(req,res)=>{
     db.changeState(req.body)
 })
 
+app.post('/delete',(req,res)=>{
+    db.deleteTask(req.body)
+})
 
 app.listen(3000,()=>{
     console.log('Port 3000!')

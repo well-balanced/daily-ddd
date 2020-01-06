@@ -1,13 +1,9 @@
-{{#if isLogined}}
+{{#if username}}
 <div id="container"class="container">
     <div class="col-md-12 text-center">
         <h1><strong>Dairy, DDD :)</strong></h1>
     </div>
 {{>todos}}
-    <div class="row">
-            <input id="enter-task" placeholder="Add your Dream :)"type="text" /><button id="task" type="button" class="btn btn-dark">Add</button>
-    </div>
-    <br>
 {{>items}}
 </div>
 {{else}}

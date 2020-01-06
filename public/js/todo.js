@@ -6,24 +6,7 @@ function createToDoList(e) {
         type: 'post',
         data:{newName:newName}
     });
-    location.reload()
-}
-
-function changeActive_todos(e) {
-    $('.todos').removeClass("active");
-    $(e.target).addClass("active")
-    $.ajax({
-        url: '/',
-        type: 'post',
-        data:{todoname:`${$('.todos.active').text()}`}
-    });
-    $.ajax({
-        url: '/',
-        data:{todoname:`${$('.todos.active').text()}`},
-        success: function(result) {
-            console.log(result)
-        }
-    });
+    window.location.href = "/"
 }
 
 function login(e) {
@@ -112,7 +95,7 @@ $(function(){
             data:{
                 task:`${$('#enter-task').val()}`,
                 state:'task',
-                todoname:`${$('.todos.active').text()}`
+                todoname:`${$('#current').text()}`
             },
         });
 
@@ -161,7 +144,15 @@ $(function(){
     $('#register_button').click((e)=>{
         register(e);
     })
-    $('.todos').click((e)=>{
-        changeActive_todos(e)
+    $('.delete-todo-button').click((e)=>{
+       var target = $(e.target).parent();
+       $.ajax({
+           url:`/chart/${target.text()}`,
+           data: {todoname:`${target.text()}`},
+           type: 'delete',
+           success: function(data) {
+               window.location.href = "/"
+           }
+       })
     })
 })

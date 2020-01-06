@@ -1,4 +1,5 @@
-<div id="todos"class="border rounded-pill">
+<div id="todos" class="border rounded-pill">
+    <p id="current" hidden>{{chartname}}</p>
     <a id="add" href=""><i class="far fa-plus-square"data-target="#newtodo" data-toggle="modal"></i></a>
-    {{#each todoList}}<strong><span class="todos active">{{this}}</span></strong>{{/each}}
+    {{#each todoList}}<strong><span class="todos" onclick="location.href='/chart/{{this}}'">{{this}}<ion-icon name='trash' class="trash delete-todo-button"></ion-icon></span></strong>{{/each}}
 </div>
