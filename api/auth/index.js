@@ -11,11 +11,8 @@ router.use(flash());
 controller.passportSetting()
 
 router.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/auth/login/fail', failureFlash:true}));
-
 router.get('/login/fail', controller.flashMessage)
-
 router.post('/register', controller.register);
-
 router.get('/logout', controller.logout)
 
 module.exports = router;
