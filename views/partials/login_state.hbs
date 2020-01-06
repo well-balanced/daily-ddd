@@ -1,0 +1,9 @@
+<div class="row">
+  <div class="col-md-9"></div>
+  <div class="col-md-3">
+    {{#if isLogined}}
+    Welcome, {{username}} &nbsp<i class="fas fa-lock-open" onclick="location.href='/auth/logout'"></i>
+    {{else}}
+Easy Sign up, Easy Use. &nbsp<i class="fas fa-lock" data-target="#login" data-toggle="modal"></i>
+    </div>{{/if}}
+</div>

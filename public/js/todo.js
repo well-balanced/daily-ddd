@@ -9,7 +9,22 @@ function createToDoList(e) {
     location.reload()
 }
 
-
+function changeActive_todos(e) {
+    $('.todos').removeClass("active");
+    $(e.target).addClass("active")
+    $.ajax({
+        url: '/',
+        type: 'post',
+        data:{todoname:`${$('.todos.active').text()}`}
+    });
+    $.ajax({
+        url: '/',
+        data:{todoname:`${$('.todos.active').text()}`},
+        success: function(result) {
+            console.log(result)
+        }
+    });
+}
 
 function login(e) {
     var username = $('#login_username').val()
@@ -94,7 +109,11 @@ $(function(){
         $.ajax({ 
             url:'/create', 
             type:'post', 
-            data:{task:`${$('#enter-task').val()}`,state:'task',id:'1'},
+            data:{
+                task:`${$('#enter-task').val()}`,
+                state:'task',
+                todoname:`${$('.todos.active').text()}`
+            },
         });
 
         // 입력값 넣기
@@ -141,5 +160,8 @@ $(function(){
     })
     $('#register_button').click((e)=>{
         register(e);
+    })
+    $('.todos').click((e)=>{
+        changeActive_todos(e)
     })
 })

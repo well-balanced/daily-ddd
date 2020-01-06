@@ -1,11 +1,8 @@
 const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcrypt')
 const app = express();
 const hbs = require('express-handlebars');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
-const flash = require('connect-flash');
 const passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session')
@@ -24,7 +21,7 @@ app.use(session({
     }),
   }))
 
-app.use(flash());
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.json());
@@ -35,11 +32,11 @@ app.engine('hbs',hbs({
     extname:'hbs',
     defaultLayout:'layout',
     layoutsDir:__dirname+'/views/layout',
-    partialsDir:__dirname+'views/partials'
+    partialsDir:__dirname+'/views/partials'
 }));
 
 app.set('view engine','hbs');
-// app.use('/auth',require('./api/auth/index'))
+app.use('/auth',require('./api/auth/index'))
 
 
 var db = mysql.createConnection({
@@ -50,46 +47,13 @@ var db = mysql.createConnection({
   });
 db.connect();
 
-passport.serializeUser(function(user, done) {
-    done(null, user[0].username);
-});
-  
-passport.deserializeUser(function(username, done) {
-    db.query("SELECT * FROM users WHERE username = ?;", username, (err,user)=>{
-        done(null, user);  
-    })
-});
-   
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-        db.query("SELECT * FROM users WHERE username = ?;", username, (err,user)=>{
-            if(err) {
-                return done(err);
-            }
-            if(user.length===0) {
-                return done(null,false, {message: '유저가 존재하지 않습니다.'})
-            }
-            if(password!==user[0].password){
-                return done(null,false, {message:'잘못된 비밀번호입니다.'})
-            }
-            return done(null,user)
-        })
-    }
-));
 
 
 
 // '/' get
 
-function authUser(user) {
-    if(user) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
-function getUserInfo(username,callback) {
+function getUserInfo(username,todoname,callback) {
     db.query(`SELECT * FROM users WHERE users.username="${username}"`,function (error, user, fields) {
         if (error) {
             console.log(error)
@@ -99,25 +63,43 @@ function getUserInfo(username,callback) {
         var progressList = [];
         var doneList = [];
         if (user[0]) {
-            db.query(`SELECT state,task,todoname FROM todo LEFT JOIN users ON todo.user_id=${user[0].id}`,function (error, results, fields) {
+            if(todoname==undefined){
+                db.query(`SELECT todoname FROM todo WHERE user_id=${user[0].id}`,(error,todos)=>{
+                    if(todos[0]!==undefined) {
+                        todos.forEach((data)=>{
+                            todoList.push(data.todoname)
+                            // todoList.forEach((todo)=>{
+                            //     if(todo!==todoname.todoname) {
+                            //         todoList.push(todoname.todoname)
+                            //     }
+                            // })
+                        })
+                    }
+                    todoList = Array.from(new Set(todoList))
+                    callback(todoList,taskList,progressList,doneList)
+                })
+                return
+            }
+            db.query(`SELECT state,task,todoname FROM todo WHERE user_id=${user[0].id} AND todoname='${todoname}'`,function (error, results, fields) {
                 if (error) {
                     console.log(error)
-                }
-                todoList.push(results[0].todoname)
-                results.forEach((result,index)=>{
-                    if(result.state === 'task') {
-                        taskList.push(result.task)
-                    } else if(result.state === 'progress') {
-                        progressList.push(result.task)
-                    } else if(result.state === 'done') {
-                        doneList.push(result.task)
-                    }
-                    todoList.forEach((todo,i)=>{
-                        if(todo!==result.todoname) {
-                            todoList.push(result.todoname)
+                } else if (results[0]!==undefined) {
+                    todoList.push(results[0].todoname)
+                    results.forEach((result,index)=>{
+                        if(result.state === 'task') {
+                            taskList.push(result.task)
+                        } else if(result.state === 'progress') {
+                            progressList.push(result.task)
+                        } else if(result.state === 'done') {
+                            doneList.push(result.task)
                         }
+                        todoList.forEach((todo)=>{
+                            if(todo!==result.todoname) {
+                                todoList.push(result.todoname)
+                            }
+                        })
                     })
-                })
+                }
                 todoList = Array.from(new Set(todoList))
                 callback(todoList,taskList,progressList,doneList)
             })
@@ -127,8 +109,8 @@ function getUserInfo(username,callback) {
     })
 }
 
-function createTask(body) {
-    db.query(`INSERT INTO todo (task,state,user_id,todoname) values('${body.task}','${body.state}','${body.id}','${todoname}')`)
+function createTask(body,id) {
+    db.query(`INSERT INTO todo (task,state,user_id,todoname) values('${body.task}','${body.state}','${id}','${body.todoname}')`)
 }
 
 function deleteTask(body) {
@@ -140,19 +122,17 @@ function changeState(body) {
 }
 
 
-function createNewToDo(user,name) {
+function createNewToDo(id,name) {
     console.log(name)
-    db.query(`INSERT INTO todo (todoname) values('${name}')`)
+    db.query(`INSERT INTO todo (todoname,user_id) values('${name}','${id}')`)
 }
-
-
 app.get('/',(req,res)=>{
     var isLogined, username
     if(req.user) {
         var isLogined = true;
         var username = req.user[0].username
     }
-    getUserInfo(username, (todoList,taskList,progressList,doneList)=>{
+    getUserInfo(username, req.query.todoname, (todoList,taskList,progressList,doneList)=>{
         res.render('index',{
             isLogined,
             username,
@@ -164,13 +144,33 @@ app.get('/',(req,res)=>{
     })
 })
 
+app.post('/',(req,res)=>{
+    var isLogined, username
+    if(req.user) {
+        var isLogined = true;
+        var username = req.user[0].username
+    }
+    getUserInfo(username, req.body.todoname, (todoList,taskList,progressList,doneList)=>{
+        res.render('index',{
+            isLogined,
+            username,
+            todoList,
+            taskList,
+            progressList,
+            doneList,
+        })
+    })
+})
+
+
 app.post('/new',(req,res)=>{
-    createNewToDo('well-balanced',req.body.newName)
+    createNewToDo(req.user[0].id,req.body.newName)
 
 })
 
 app.post('/create',(req,res)=>{
-    createTask(req.body)
+    var userId = req.user[0].id
+    createTask(req.body,userId)
 })
 
 app.post('/delete',(req,res)=>{
@@ -185,35 +185,6 @@ app.post('/done',(req,res)=>{
     changeState(req.body)
 })
 
-app.post('/auth/login',
-  passport.authenticate('local', { successRedirect: '/', failureRedirect: '/auth/login/fail', failureFlash:true}));
-
-
-app.get('/auth/login/fail', (req,res)=>{
-    res.status(409).send(req.flash().error[0])
-})
-
-app.post('/auth/register',(req,res)=>{
-    var username = req.body.username;
-    var password = req.body.password;
-    db.query(`SELECT * FROM users WHERE username='${username}';`, (err,user)=>{
-        if(user[0]) {       
-            res.status(409).send('이미 존재하는 username 입니다.')
-        } else {
-            if(username.length > 16 || password.length > 16) {
-                res.status(409).send("username과 password는 16자를 넘을 수 없습니다.")
-            } else {
-                db.query(`INSERT INTO users (username,password) values('${username}','${password}')`)
-                res.send('성공적으로 회원가입이 완료되었습니다.')
-            }
-        }
-    })
-});
-
-app.get('/auth/logout', (req,res)=>{
-    req.logout()
-    res.redirect('/')
-})
 
 
 app.listen(3000,()=>{
