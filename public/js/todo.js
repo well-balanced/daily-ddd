@@ -1,158 +1,178 @@
-
-function createToDoList(e) {
+function createToDoList() {
     var newName = $('#newName').val()
     $.ajax({
         url: '/new',
         type: 'post',
-        data:{newName:newName}
+        data: {
+            newName
+        },
+        success: function() {
+            window.location.href = "/"
+        }
     });
-    window.location.href = "/"
-}
+};
 
-function login(e) {
-    var username = $('#login_username').val()
-    var password = $('#login_password').val()
+function login() {
+    var username = $('#login_username').val();
+    var password = $('#login_password').val();
     $.ajax({
         url: '/auth/login',
         type: 'post',
-        data:{
-            username:username,
-            password:password
+        data: {
+            username,
+            password
         },
         success: function() {
             $('#login').modal("hide");
-            location.reload()
+            location.reload();
         },
         error: function(req) {
-            $('.auth-flash-massage').text(req.responseText)
+            $('.auth-flash-massage').text(req.responseText);
         }
-    })
-}
+    });
+};
 
-function register(e) {
-    var username = $('#register_username').val()
-    var password = $('#register_password').val()
+function register() {
+    var username = $('#register_username').val();
+    var password = $('#register_password').val();
     $.ajax({
         url: '/auth/register',
         type: 'post',
-        data:{
-            username:username,
-            password:password
+        data: {
+            username,
+            password
         },
         success: function(result) {
-            alert(result)
-            location.reload()
+            alert(result);
+            location.reload();
         },
-        error: function(req,status,error){
-            $('.auth-flash-massage').text(req.responseText)
+        error: function(req,status,error) {
+            $('.auth-flash-massage').text(req.responseText);
         }
-    })
-}
-
-function onDelete(e) {
-    var p = $(e.target).parent();
-    $.ajax({ 
-      url:'/delete', 
-      type:'post', 
-      data:{task:`${p.text().trim()}`},
     });
-    p.fadeOut('slow',()=>{
-      p.remove()
-    })
-}
-function onChange(e){
-    var pp = $(e.target).parent().parent().attr('id');
-    var p = $(e.target).parent();
-    if (pp === 'tasklist') {
-        $.ajax({ 
-            url:'/progress', 
-            type:'post', 
-            data:{task:`${p.text().trim()}`,state:'progress'},
-        });
-        p.fadeOut('slow',()=>{
-            $('#progresslist').append(p);
-            p.fadeIn()
-        })
-    } else if (pp === 'progresslist') {
-        $.ajax({ 
-            url:'/done', 
-              type:'post', 
-              data:{task:`${p.text().trim()}`,state:'done'},
-              });
-        p.fadeOut(()=>{
-            $('#donelist').append(p);
-            p.fadeIn()
-        })
-    }
-}
+};
 
+function onDelete(event) {
+    var parent = $(event.target).parent();
+    $.ajax({ 
+      url: '/delete', 
+      type: 'post', 
+      data: {
+          task:`${parent.text().trim()}`
+        },
+    });
+    parent.fadeOut('slow',()=>{
+        parent.remove();
+    });
+};
 
-$(function(){
-    $('#task').click((e)=>{
+function onChange(event) {
+    var grandParent = $(event.target).parent().parent().attr('id');
+    var parent = $(event.target).parent();
+    if (grandParent === 'tasklist') {
         $.ajax({ 
-            url:'/create', 
-            type:'post', 
-            data:{
-                task:`${$('#enter-task').val()}`,
-                state:'task',
-                todoname:`${$('#current').text()}`
+            url: '/progress', 
+            type: 'post', 
+            data: {
+                task: `${parent.text().trim()}`,
+                state: 'progress'
             },
         });
+        parent.fadeOut('slow',() => {
+            $('#progresslist').append(parent);
+            parent.fadeIn();
+        });
+    } else if (grandParent === 'progresslist') {
+        $.ajax({ 
+            url: '/done', 
+              type: 'post', 
+              data: {
+                  task:`${parent.text().trim()}`,
+                  state:'done'
+                },
+              });
+        parent.fadeOut(() => {
+            $('#donelist').append(parent);
+            parent.fadeIn();
+        });
+    }
+};
 
-        // 입력값 넣기
-        var task = $("<p class='task border rounded text-left'></p>").text($('#enter-task ').val()+' ')
-      
-        //삭제버튼
-        var del = $("<ion-icon name='trash' class='trash'> </ion-icon>").click((e)=>{
-          onDelete(e)
+
+$(function() {
+    $('#task').click(() => {
+        $.ajax({ 
+            url: '/create', 
+            type: 'post', 
+            data: {
+                task: `${$('#enter-task').val()}`,
+                state: 'task',
+                todoname: `${$('#current').text()}`
+            },
+        });
+        var task = $("<p class='task border rounded text-left'></p>").text($('#enter-task ').val()+' ');
+
+        var del = $("<ion-icon name='trash' class='trash'> </ion-icon>").click((event) => {
+          onDelete(event);
         });
         
-        var check = $("<ion-icon name='checkmark' class='check'>&nbsp</ion-icon>").click((e)=>{
-            onChange(e)
-        })
-        // task 변수에 기능 추가
-        task.append(check,del)
-        // 할일 추가
-        $("#tasklist").append(task)
-        $("#enter-task").val('')
-      })
-    $('.trash').click((e)=>{
-        onDelete(e);
-    })
-    $('.check').click((e)=>{
-        onChange(e);
-    })
-    $('#add').click((e)=>{
-        e.preventDefault();
-    })
-    $('#newlist').click((e)=>{
+        var check = $("<ion-icon name='checkmark' class='check'>&nbsp</ion-icon>").click((event) => {
+            onChange(event);
+        });
+
+        task.append(check,del);
+
+        $("#tasklist").append(task);
+        $("#enter-task").val('');
+      });
+
+    $('.trash').click((event) => {
+        onDelete(event);
+    });
+
+    $('.check').click((event) => {
+        onChange(event);
+    });
+
+    $('#add').click((event) => {
+        event.preventDefault();
+    });
+
+    $('#newlist').click((event) => {
         $('#newtodo').modal("hide");
-        createToDoList(e)
-    })
-    $('#login_password').keydown((e)=>{
-        if (e.keyCode == 13) {
-            login(e);
+        createToDoList(event);
+    });
+
+    $('#login_password').keydown((event) => {
+        if (event.keyCode == 13) {
+            login(event);
         }
-    })
-    $('#login_button').click((e)=>{
-        login(e); 
-    })
-    $('#login_register_button').click((e)=>{
+    });
+
+    $('#login_button').click((event) => {
+        login(event); 
+    });
+    
+    $('#login_register_button').click(() => {
         $('#login').modal("hide");
         $('#register').modal("show");
-    })
-    $('#register_button').click((e)=>{
-        register(e);
-    })
-    $('.delete-todo-button').click((e)=>{
-       var target = $(e.target).parent();
+    });
+
+    $('#register_button').click((event) => {
+        register(event);
+    });
+
+    $('.delete-todo-button').click((event) => {
+       var target = $(event.target).parent();
        $.ajax({
-           url:`/chart/${target.text()}`,
-           data: {todoname:`${target.text()}`},
+           url: `/chart/${target.text()}`,
+           data: {
+               todoname: `${target.text()}`
+            },
            type: 'delete',
-           success: function(data) {
-               window.location.href = "/"
+           success: function() {
+               window.location.href = "/";
            }
-       })
-    })
-})
+       });
+    });
+});

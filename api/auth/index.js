@@ -8,11 +8,18 @@ router.use(passport.initialize());
 router.use(passport.session());
 router.use(flash());
 
-controller.passportSetting()
+controller.passportSetting();
 
-router.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/auth/login/fail', failureFlash:true}));
-router.get('/login/fail', controller.flashMessage)
+router.post('/login', passport.authenticate('local', { 
+    successRedirect: '/', 
+    failureRedirect: '/auth/login/fail', 
+    failureFlash:true
+}));
+
+router.get('/login/fail', controller.flashMessage);
+
 router.post('/register', controller.register);
-router.get('/logout', controller.logout)
+
+router.get('/logout', controller.logout);
 
 module.exports = router;
