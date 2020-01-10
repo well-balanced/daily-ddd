@@ -55,6 +55,7 @@ exit
 Create `.env` file
 ```
 touch .env
+vim .env
 ```
 
 Enter your MySQL Information in `.env`
