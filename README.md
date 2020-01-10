@@ -10,7 +10,7 @@ It focuses on basic function of To Do List. so It's very easy to use. Daily DDD 
 ## Getting Started on your local
 > Before Start, Check to install `MySQL`
 ```
-npm install
+sudo npm install
 ```
 
 ### Set Database
@@ -73,7 +73,7 @@ sudo npm i -g pm2
 ```
 
 ```
-pm2 start app.js
+sudo pm2 start app.js
 ```
 
 
