@@ -69,6 +69,10 @@ port=3306
 ### Finish
 
 ```
+sudo npm i -g pm2
+```
+
+```
 pm2 start app.js
 ```
 
