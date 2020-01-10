@@ -69,7 +69,7 @@ port=3306
 ### Finish
 
 ```
-npm start
+pm2 start app.js
 ```
 
 
@@ -87,3 +87,4 @@ Go to your [localhost](http://localhost:3000/)
 - [mysql](https://www.npmjs.com/package/mysql) 2.17.1
 - [passport](portjs.org) 0.4.1
 - [passport-local](https://www.npmjs.com/package/passport-local) 1.0.0
+- [pm2](https://pm2.keymetrics.io/) 4.2.1
