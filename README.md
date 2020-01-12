@@ -43,6 +43,7 @@ CREATE TABLE `your database`.`todo` (
   `user_id` INT(11) NULL,
   `state` VARCHAR(20) NULL,
   `todoname` VARCHAR(45) NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id)
   PRIMARY KEY (`id`));
 ```
 Exit Database
