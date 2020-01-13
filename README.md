@@ -5,7 +5,7 @@
 It focuses on basic function of To Do List. so It's very easy to use. Daily DDD provides To Do List made of Easy and Simple UI. It helps you to manage your task more efficiently. 
 
 ## UI
-<img width="1256" alt="스크린샷 2020-01-09 21 40 13" src="https://user-images.githubusercontent.com/48206623/72068589-c7156d00-3328-11ea-9b9e-bf4c091b4624.png">
+<img width="1243" alt="스크린샷 2020-01-14 05 01 39" src="https://user-images.githubusercontent.com/48206623/72287776-fca0ba00-368a-11ea-991f-bc043e9dacd6.png">
 
 ## Getting Started on your local
 > Before Start, Check to install `MySQL`
